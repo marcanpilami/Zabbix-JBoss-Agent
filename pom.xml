@@ -4,12 +4,47 @@
 
 	<groupId>org.oxymores.monitoring</groupId>
 	<artifactId>zabbix-jboss-agent</artifactId>
-	<version>1.1.1</version>
+	<version>1.1.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Zabbix JBoss 7+ agent</name>
 	<url>http://www.oxymores.org</url>
 
+    <licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<organization>
+		<name>Enioka</name>
+		<url>http://www.enioka.com</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<id>mag</id>
+			<name>Marc-Antoine Gouillart</name>
+			<email>ma.gouillart@oxymores.org</email>
+			<url>http://www.oxymores.org</url>
+			<organization>Oxymores</organization>
+			<roles>
+				<role>maintainer</role>
+			</roles>
+			<timezone>Europe/Paris</timezone>
+			<properties>
+			</properties>
+		</developer>
+    </developers>
+    
+    <scm>
+		<developerConnection>scm:git:ssh://git@github.com:marcanpilami/Zabbix-JBoss-Agent.git</developerConnection>
+		<connection>scm:git:https://github.com/marcanpilami/Zabbix-JBoss-Agent.git</connection>
+		<url>https://github.com/marcanpilami/Zabbix-JBoss-Agent</url>
+	</scm>
+    
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -65,6 +100,24 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+            
+            <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.4.2</version><!--$NO-MVN-MAN-VER$ -->
+				<configuration>
+					<!-- Only use local Git repository, push will be manual -->
+					<localCheckout>true</localCheckout>
+					<pushChanges>false</pushChanges>
+
+					<!-- One version to rule them all -->
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+
+					<!-- Use custom release profile -->
+					<useReleaseProfile>false</useReleaseProfile>
+					<releaseProfiles>release</releaseProfiles>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
