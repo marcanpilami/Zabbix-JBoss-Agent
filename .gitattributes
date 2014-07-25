@@ -1,5 +1,5 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Everyone should work with LF. If CRLF, remove them at check-in.
+* eol=lf
 
 # Custom for Visual Studio
 *.cs     diff=csharp

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<jboss-cli xmlns="urn:jboss:cli:1.2">  
+    <validate-operation-requests>false</validate-operation-requests>
+    <resolve-parameter-values>false</resolve-parameter-values>
+    <history>
+        <enabled>false</enabled>
+        <file-name>.jboss-cli-history</file-name>
+        <file-dir>${user.home}</file-dir>
+        <max-size>500</max-size>
+    </history>
+    <silent>false</silent>
+</jboss-cli>

@@ -1,0 +1,40 @@
+# General data
+jboss.jvm.os.name;/host=%2$s/server=%1$s/core-service=platform-mbean/type=operating-system:read-attribute(name=name)
+jboss.jvm.os.version;/host=%2$s/server=%1$s/core-service=platform-mbean/type=operating-system:read-attribute(name=version)
+
+# Status
+jboss.jvm.status;/host=%2$s/server-config=%1$s:read-attribute(name=status)
+
+# Memory
+jboss.jvm.memory.heap.used;/host=%2$s/server=%1$s/core-service=platform-mbean/type=memory:read-attribute(name=heap-memory-usage)!used
+jboss.jvm.memory.heap.committed;/host=%2$s/server=%1$s/core-service=platform-mbean/type=memory:read-attribute(name=heap-memory-usage)!committed
+jboss.jvm.memory.heap.max;/host=%2$s/server=%1$s/core-service=platform-mbean/type=memory:read-attribute(name=heap-memory-usage)!max
+jboss.jvm.memory.nonheap.used;/host=%2$s/server=%1$s/core-service=platform-mbean/type=memory:read-attribute(name=non-heap-memory-usage)!used
+jboss.jvm.memory.nonheap.committed;/host=%2$s/server=%1$s/core-service=platform-mbean/type=memory:read-attribute(name=non-heap-memory-usage)!committed
+jboss.jvm.memory.nonheap.max;/host=%2$s/server=%1$s/core-service=platform-mbean/type=memory:read-attribute(name=non-heap-memory-usage)!max
+
+# GC
+jboss.jvm.gc.marksweep.count;/host=%2$s/server=%1$s/core-service=platform-mbean/type=garbage-collector/name=PS_MarkSweep:read-attribute(name=collection-count)
+jboss.jvm.gc.marksweep.time;/host=%2$s/server=%1$s/core-service=platform-mbean/type=garbage-collector/name=PS_MarkSweep:read-attribute(name=collection-time)
+jboss.jvm.gc.scavenge.count;/host=%2$s/server=%1$s/core-service=platform-mbean/type=garbage-collector/name=PS_Scavenge:read-attribute(name=collection-count)
+jboss.jvm.gc.scavenge.time;/host=%2$s/server=%1$s/core-service=platform-mbean/type=garbage-collector/name=PS_Scavenge:read-attribute(name=collection-time)
+
+# Threads
+jboss.jvm.thread.count;/host=%2$s/server=%1$s/core-service=platform-mbean/type=threading:read-attribute(name=thread-count)
+jboss.jvm.thread.daemoncount;/host=%2$s/server=%1$s/core-service=platform-mbean/type=threading:read-attribute(name=daemon-thread-count)
+jboss.jvm.thread.cputime;/host=%2$s/server=%1$s/core-service=platform-mbean/type=threading:read-attribute(name=current-thread-cpu-time)
+
+# Datasources
+jboss.ds.pool.active;subsystem=datasources/data-source=%1$s/statistics=pool:read-attribute(name=ActiveCount)!sum(/:host,/:server)
+jboss.ds.pool.active.as;/host=%3$s/server=%2$s/subsystem=datasources/data-source=%1$s/statistics=pool:read-attribute(name=ActiveCount)
+jboss.ds.pool.maxsize.as;/host=%3$s/server=%2$s/subsystem=datasources/data-source=%1$s:read-attribute(name=max-pool-size)
+jboss.ds.pool.maxsize;/profile=%2$s/subsystem=datasources/data-source=%1$s:read-attribute(name=max-pool-size)
+jboss.ds.pool.minsize;/profile=%2$s/subsystem=datasources/data-source=%1$s:read-attribute(name=min-pool-size)
+
+# Deployments
+jboss.appli.status;/host=%2$s/server=%1$s/deployment=%3$s:read-attribute(name=status)
+jboss.appli.session.active;deployment=%1$s/subsystem=web:read-attribute(name=active-sessions)!sum(/:host,/:server)
+
+# Project specific
+jboss.jvm.mq.qcf.available;/host=%2$s/server=%1$s/deployment=wmq.jmsra.rar/subsystem=resource-adapters/statistics=statistics/connection-definitions="java:jboss/jms/qcf":read-attribute(name=AvailableCount)
+jboss.jvm.mq.qcf.active;/host=%2$s/server=%1$s/deployment=wmq.jmsra.rar/subsystem=resource-adapters/statistics=statistics/connection-definitions="java:jboss/jms/qcf":read-attribute(name=ActiveCount)
