@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.oxymores.monitoring</groupId>
@@ -9,7 +10,7 @@
 	<name>Zabbix JBoss 7+ agent</name>
 	<url>http://www.oxymores.org</url>
 
-    <licenses>
+	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
 			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
@@ -36,15 +37,15 @@
 			<properties>
 			</properties>
 		</developer>
-    </developers>
-    
-    <scm>
+	</developers>
+
+	<scm>
 		<developerConnection>scm:git:ssh://git@github.com:marcanpilami/Zabbix-JBoss-Agent.git</developerConnection>
 		<connection>scm:git:https://github.com/marcanpilami/Zabbix-JBoss-Agent.git</connection>
 		<url>https://github.com/marcanpilami/Zabbix-JBoss-Agent</url>
-	  <tag>HEAD</tag>
-  </scm>
-    
+		<tag>HEAD</tag>
+	</scm>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -101,8 +102,8 @@
 					</execution>
 				</executions>
 			</plugin>
-            
-            <plugin>
+
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.4.2</version><!--$NO-MVN-MAN-VER$ -->
@@ -142,6 +143,13 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

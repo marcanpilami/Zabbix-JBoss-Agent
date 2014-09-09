@@ -1,5 +1,8 @@
 package org.oxymores.monitoring;
 
+import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -13,9 +16,33 @@ public class JBossZabbixConnector extends Thread
 
     public static void main(String[] args) throws Exception
     {
+        if (args.length > 0)
+        {
+            test(args);
+            return;
+        }
+
         log.info("Starting JBoss Zabbix Connector");
         Runtime.getRuntime().addShutdownHook(new JBossZabbixConnector());
         cl = new ZabbixClient();
+    }
+
+    public static void test(String[] args)
+    {
+        JBossApi api = JBossApi.create();
+
+        // Run (not thread!) a client resolution.
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ZabbixClientThread th = new ZabbixClientThread(args[0], os, api);
+        th.run();
+        try
+        {
+            System.out.println(os.toString("UTF-8"));
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**

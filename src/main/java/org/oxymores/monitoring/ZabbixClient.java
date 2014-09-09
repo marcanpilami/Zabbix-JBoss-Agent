@@ -29,30 +29,9 @@ public class ZabbixClient
 
     ZabbixClient() throws UnknownHostException, IOException
     {
-        // Load properties
-        Properties p = new Properties();
-        InputStream props = null;
-        try
-        {
-            props = this.getClass().getClassLoader().getResourceAsStream("conf.properties");
-            if (props == null)
-            {
-                throw new RuntimeException("could not find the property file");
-            }
-            p.load(props);
-        }
-        catch (Exception e)
-        {
-            log.fatal("Could not load conf.properties file", e);
-            return;
-        }
-        finally
-        {
-            props.close();
-        }
-
-        // Connect to the JBoss domain controller
-        JBossApi api = new JBossApi(p);
+        // Connect to the domain controller
+        JBossApi api = JBossApi.create();
+        Properties p = JBossApi.getProperties();
 
         // Utility items
         StringWriter writer = null;
@@ -98,7 +77,9 @@ public class ZabbixClient
             // Don't close the stream - it would close the socket.
 
             // Create a thread to serve the key
-            pool.submit(new ZabbixClientThread(writer.toString(), clientSocket, api));
+            clientSocket.setSoTimeout(10000);
+            clientSocket.setTcpNoDelay(true);
+            pool.submit(new ZabbixClientThread(writer.toString(), clientSocket.getOutputStream(), api));
         }
 
         log.info("Zabbix client has shut down");

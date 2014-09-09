@@ -2,6 +2,7 @@ package org.oxymores.monitoring;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,51 @@ public class JBossApi implements Closeable
 
     DomainClient c;
     CommandContext ctx;
+
+    public static Properties getProperties()
+    {
+        // Load properties
+        Properties p = new Properties();
+        InputStream props = null;
+        try
+        {
+            props = JBossApi.class.getClassLoader().getResourceAsStream("conf.properties");
+            if (props == null)
+            {
+                throw new RuntimeException("could not find the property file");
+            }
+            p.load(props);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("Could not load conf.properties file", e);
+        }
+        finally
+        {
+            try
+            {
+                if (props != null)
+                {
+                    props.close();
+                }
+            }
+            catch (IOException e)
+            {
+                // Nothing to do
+            }
+        }
+        return p;
+    }
+
+    public static JBossApi create()
+    {
+        // Load configuration file
+        Properties p = getProperties();
+
+        // Connect to the JBoss domain controller
+        JBossApi api = new JBossApi(p);
+        return api;
+    }
 
     public JBossApi(final Properties p)
     {
@@ -93,14 +139,21 @@ public class JBossApi implements Closeable
         {
             log.trace("running query " + query);
             ModelNode n = ctx.buildRequest(query);
-            ModelNode res = c.execute(n);
+            ModelNode rq = c.execute(n);
+
+            if (!rq.get("outcome").asString().toUpperCase().equals("SUCCESS"))
+            {
+                log.error(rq.get("failure-description"));
+                throw new RuntimeException(rq.get("failure-description").asString());
+            }
+
             if (attr != null)
             {
-                return res.get("result").get(attr).asString();
+                return rq.get("result").get(attr).asString();
             }
             else
             {
-                return res.get("result").asString();
+                return rq.get("result").asString();
             }
         }
     }
@@ -112,6 +165,12 @@ public class JBossApi implements Closeable
             log.trace("running query " + query);
             ModelNode n = ctx.buildRequest(query);
             ModelNode rq = c.execute(n);
+
+            if (!rq.get("outcome").asString().toUpperCase().equals("SUCCESS"))
+            {
+                log.error(rq.get("failure-description"));
+                throw new RuntimeException(rq.get("failure-description").asString());
+            }
 
             List<String> res = new ArrayList<String>();
 

@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.net.Socket;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -23,13 +22,13 @@ public class ZabbixClientThread implements Runnable
     private static Logger log = Logger.getLogger(ZabbixClientThread.class);
 
     String key;
-    Socket server;
+    OutputStream serverStream;
     JBossApi api;
 
-    ZabbixClientThread(String key, Socket server, JBossApi api)
+    ZabbixClientThread(String key, OutputStream serverStream, JBossApi api)
     {
         this.key = key;
-        this.server = server;
+        this.serverStream = serverStream;
         this.api = api;
     }
 
@@ -42,10 +41,6 @@ public class ZabbixClientThread implements Runnable
             // ////////////////////////////////////////////
 
             String res;
-
-            // Socket handling
-            server.setSoTimeout(10000);
-            server.setTcpNoDelay(true);
 
             // Key analysis
             log.debug("Requested key: " + key);
@@ -126,7 +121,6 @@ public class ZabbixClientThread implements Runnable
             // Send data back to Zabbix
             // ////////////////////////////////////////////
 
-            OutputStream os = server.getOutputStream();
             log.trace(res);
 
             if (res.equals("undefined"))
@@ -135,8 +129,8 @@ public class ZabbixClientThread implements Runnable
             }
 
             // Write ZBXD\x01
-            os.write(new byte[] { 0x5a, 0x42, 0x58, 0x44, 0x01 }, 0, 5);
-            os.flush();
+            serverStream.write(new byte[] { 0x5a, 0x42, 0x58, 0x44, 0x01 }, 0, 5);
+            serverStream.flush();
 
             // Write data length (weird format - there should be a cleaner solution)
             String hex = Long.toHexString(res.length());
@@ -156,18 +150,17 @@ public class ZabbixClientThread implements Runnable
             byte b7 = (byte) Integer.parseInt("" + hexa[2] + hexa[3], 16);
             byte b8 = (byte) Integer.parseInt("" + hexa[0] + hexa[1], 16);
 
-            os.write(new byte[] { b1, b2, b3, b4, b5, b6, b7, b8 });
-            os.flush();
+            serverStream.write(new byte[] { b1, b2, b3, b4, b5, b6, b7, b8 });
+            serverStream.flush();
 
             // Result itself
-            OutputStreamWriter osw = new OutputStreamWriter(os, Charset.forName("ISO-8859-1"));
+            OutputStreamWriter osw = new OutputStreamWriter(serverStream, Charset.forName("ISO-8859-1"));
             osw.write(res);
             osw.flush();
 
             // Done: always close the socket to free TCP resources & signal Zabbix server
             osw.close();
-            os.close();
-            server.close();
+            serverStream.close();
         }
         catch (Exception e)
         {
