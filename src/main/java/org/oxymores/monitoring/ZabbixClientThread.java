@@ -230,7 +230,17 @@ public class ZabbixClientThread implements Runnable
         {
             // End of recursion: run the query!
             String query = root + "/" + query_base;
-            String res = api.runSingleQuery(query, null);
+            log.trace(query);
+            String res;
+            try
+            {
+                res = api.runSingleQuery(query, null);
+            }
+            catch (RuntimeException e)
+            {
+                res = "undefined";
+            }
+
             if (res.equals("undefined"))
             {
                 // The given item may not exist on all loops

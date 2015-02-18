@@ -36,10 +36,11 @@ public class JBossApi implements Closeable
     {
         // Load properties
         Properties p = new Properties();
+        String file = System.getProperty("config", "conf.properties");
         InputStream props = null;
         try
         {
-            props = JBossApi.class.getClassLoader().getResourceAsStream("conf.properties");
+            props = JBossApi.class.getClassLoader().getResourceAsStream(file);
             if (props == null)
             {
                 throw new RuntimeException("could not find the property file");
@@ -48,7 +49,7 @@ public class JBossApi implements Closeable
         }
         catch (Exception e)
         {
-            throw new RuntimeException("Could not load conf.properties file", e);
+            throw new RuntimeException("Could not load configuration file " + file, e);
         }
         finally
         {
@@ -143,7 +144,6 @@ public class JBossApi implements Closeable
 
             if (!rq.get("outcome").asString().toUpperCase().equals("SUCCESS"))
             {
-                log.error(rq.get("failure-description"));
                 throw new RuntimeException(rq.get("failure-description").asString());
             }
 

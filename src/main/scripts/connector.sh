@@ -45,10 +45,16 @@ then
         exit 1
 fi
 
+if [[ "${CONFFILE}" != "" ]]
+then
+    CONFFILE=" -Dconfig=${CONFFILE} "
+    II=$(echo ${CONFFILE} | md5sum | cut -d' ' -f1)
+    echo "Will use configuration file option ${CONFFILE}"
+fi
 
-PID_FILE=../conf/app.pid
-LOG_OUT_FILE=../logs/connector_out
-LOG_ERR_FILE=../logs/connector_err
+PID_FILE=../conf/app${II}.pid
+LOG_OUT_FILE=../logs/connector_out${II}
+LOG_ERR_FILE=../logs/connector_err${II}
 STDOUT_NPIPE=../logs/stdout_$$.pipe
 STDERR_NPIPE=../logs/stderr_$$.pipe
 LOG_HISTORY=30  # Days of log history to keep
@@ -97,7 +103,7 @@ app_start() {
 	# We can go on...
 	if [[ $1 == "console" ]]
 	then
-		$JAVA -jar $START_JAR
+		$JAVA ${CONFFILE} -jar $START_JAR 
 	else
 		remove_npipes
 		mknod $STDOUT_NPIPE p
@@ -106,7 +112,7 @@ app_start() {
 		log_rotate <$STDERR_NPIPE $LOG_ERR_FILE &
 		exec 1> $STDOUT_NPIPE
 		exec 2> $STDERR_NPIPE
-		nohup $JAVA -jar $START_JAR  &
+		nohup $JAVA  ${CONFFILE} -jar $START_JAR  &
 		PID=$!
 		echo $PID > ${PID_FILE}
 		echo "Application started with pid ${PID}"
