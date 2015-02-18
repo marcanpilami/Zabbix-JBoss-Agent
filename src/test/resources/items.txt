@@ -35,6 +35,9 @@ jboss.ds.pool.minsize;/profile=%2$s/subsystem=datasources/data-source=%1$s:read-
 jboss.appli.status;/host=%2$s/server=%1$s/deployment=%3$s:read-attribute(name=status)
 jboss.appli.session.active;deployment=%1$s/subsystem=web:read-attribute(name=active-sessions)!sum(/:host,/:server)
 
+# Hits
+jboss.jvm.hits;/host=%2$s/server=%1$s/server=GepAsPPD1_01_01/subsystem=web/connector=http:read-attribute(name=requestCount)
+
 # Project specific
 jboss.jvm.mq.qcf.available;/host=%2$s/server=%1$s/deployment=wmq.jmsra.rar/subsystem=resource-adapters/statistics=statistics/connection-definitions="java:jboss/jms/qcf":read-attribute(name=AvailableCount)
 jboss.jvm.mq.qcf.active;/host=%2$s/server=%1$s/deployment=wmq.jmsra.rar/subsystem=resource-adapters/statistics=statistics/connection-definitions="java:jboss/jms/qcf":read-attribute(name=ActiveCount)
