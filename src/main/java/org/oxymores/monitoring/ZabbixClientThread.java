@@ -160,11 +160,21 @@ public class ZabbixClientThread implements Runnable
 
             // Done: always close the socket to free TCP resources & signal Zabbix server
             osw.close();
-            serverStream.close();
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            log.error(e);
+        }
+        finally
+        {
+            try
+            {
+                serverStream.close();
+            }
+            catch (IOException e)
+            {
+                // Nothing to do.
+            }
         }
     }
 
