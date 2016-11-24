@@ -31,6 +31,7 @@ public class JBossApi implements Closeable
 
     DomainClient c;
     CommandContext ctx;
+    final Properties cnxProps;
 
     public static Properties getProperties()
     {
@@ -78,7 +79,13 @@ public class JBossApi implements Closeable
         return api;
     }
 
-    public JBossApi(final Properties p)
+    private JBossApi(final Properties p)
+    {
+        this.cnxProps = p;
+        reconnect();
+    }
+
+    private void reconnect()
     {
         CallbackHandler m = new CallbackHandler()
         {
@@ -86,16 +93,16 @@ public class JBossApi implements Closeable
             {
                 for (Callback current : callbacks)
                 {
-                    log.debug("Authentication callback was called with vallback of type " + current.getClass());
+                    log.debug("Authentication callback was called with callback of type " + current.getClass());
                     if (current instanceof NameCallback)
                     {
                         NameCallback ncb = (NameCallback) current;
-                        ncb.setName(p.getProperty("jboss_admin_user"));
+                        ncb.setName(cnxProps.getProperty("jboss_admin_user"));
                     }
                     else if (current instanceof PasswordCallback)
                     {
                         PasswordCallback pcb = (PasswordCallback) current;
-                        pcb.setPassword(p.getProperty("jboss_admin_password").toCharArray());
+                        pcb.setPassword(cnxProps.getProperty("jboss_admin_password").toCharArray());
                     }
                     else if (current instanceof RealmCallback)
                     {
@@ -112,13 +119,8 @@ public class JBossApi implements Closeable
 
         try
         {
-            /*
-             * URL f = this.getClass().getClassLoader().getResource("jboss-cli.xml"); if (f != null) {
-             * log.info("Using JBoss CLI configuration file inside " + (new File(f.getPath()).getParentFile()));
-             * System.setProperty("user.dir", (new File(f.getPath()).getParentFile()).getAbsolutePath()); }
-             */
-            c = DomainClient.Factory.create(InetAddress.getByName(p.getProperty("jboss_server_name")),
-                    Integer.parseInt(p.getProperty("jboss_server_port")), m);
+            c = DomainClient.Factory.create(InetAddress.getByName(cnxProps.getProperty("jboss_server_name")),
+                    Integer.parseInt(cnxProps.getProperty("jboss_server_port")), m);
             ctx = CommandContextFactory.getInstance().newCommandContext();
             ctx.setResolveParameterValues(false);
             ctx.setSilent(true);
@@ -129,57 +131,51 @@ public class JBossApi implements Closeable
         }
     }
 
-    public void close() throws IOException
+    public synchronized void close() throws IOException
     {
         c.close();
     }
 
-    public String runSingleQuery(String query, String attr) throws CommandFormatException, IOException
+    public synchronized String runSingleQuery(String query, String attr) throws CommandFormatException, IOException
     {
-        synchronized (ctx)
+        log.trace("running query " + query);
+        ModelNode n = ctx.buildRequest(query);
+        ModelNode rq = c.execute(n);
+
+        if (!rq.get("outcome").asString().toUpperCase().equals("SUCCESS"))
         {
-            log.trace("running query " + query);
-            ModelNode n = ctx.buildRequest(query);
-            ModelNode rq = c.execute(n);
+            throw new RuntimeException(rq.get("failure-description").asString());
+        }
 
-            if (!rq.get("outcome").asString().toUpperCase().equals("SUCCESS"))
-            {
-                throw new RuntimeException(rq.get("failure-description").asString());
-            }
-
-            if (attr != null)
-            {
-                return rq.get("result").get(attr).asString();
-            }
-            else
-            {
-                return rq.get("result").asString();
-            }
+        if (attr != null)
+        {
+            return rq.get("result").get(attr).asString();
+        }
+        else
+        {
+            return rq.get("result").asString();
         }
     }
 
-    public List<String> runListQuery(String query) throws CommandFormatException, IOException
+    public synchronized List<String> runListQuery(String query) throws CommandFormatException, IOException
     {
-        synchronized (ctx)
+        log.trace("running query " + query);
+        ModelNode n = ctx.buildRequest(query);
+        ModelNode rq = c.execute(n);
+
+        if (!rq.get("outcome").asString().toUpperCase().equals("SUCCESS"))
         {
-            log.trace("running query " + query);
-            ModelNode n = ctx.buildRequest(query);
-            ModelNode rq = c.execute(n);
-
-            if (!rq.get("outcome").asString().toUpperCase().equals("SUCCESS"))
-            {
-                log.error(rq.get("failure-description"));
-                throw new RuntimeException(rq.get("failure-description").asString());
-            }
-
-            List<String> res = new ArrayList<String>();
-
-            for (ModelNode r : rq.get("result").asList())
-            {
-                res.add(r.asString());
-            }
-
-            return res;
+            log.error(rq.get("failure-description"));
+            throw new RuntimeException(rq.get("failure-description").asString());
         }
+
+        List<String> res = new ArrayList<String>();
+
+        for (ModelNode r : rq.get("result").asList())
+        {
+            res.add(r.asString());
+        }
+
+        return res;
     }
 }

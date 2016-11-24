@@ -20,8 +20,6 @@ public class Discovery
         res = res.substring(0, res.length() - 1) + "]}";
 
         return res;
-
-        // return res;
     }
 
     public static String discoverAs(JBossApi api) throws CommandFormatException, IOException
@@ -80,7 +78,7 @@ public class Discovery
 
         return res;
     }
-    
+
     public static String discoverDeploymentsOnAs(JBossApi api) throws CommandFormatException, IOException
     {
         String res = "{ \"data\": [";
@@ -96,14 +94,15 @@ public class Discovery
                 {
                     res += " { \"{#DPHOST}\":\"" + s + "\", \"{#DPAS}\":\"" + a + "\", \"{#DPNAME}\":\"" + d + "\"},";
                 }
-                
+
             }
         }
 
         res = res.substring(0, res.length() - 1) + "]}";
+
         return res;
     }
-    
+
     public static String discoverDatasourcesOnAs(JBossApi api) throws CommandFormatException, IOException
     {
         String res = "{ \"data\": [";
@@ -114,16 +113,18 @@ public class Discovery
             List<String> ass = api.runListQuery("/host=" + s + "/:read-children-names(child-type=server)");
             for (String a : ass)
             {
-                List<String> dps = api.runListQuery("/host=" + s + "/server=" + a + "/subsystem=datasources/:read-children-names(child-type=data-source)");
+                List<String> dps = api.runListQuery(
+                        "/host=" + s + "/server=" + a + "/subsystem=datasources/:read-children-names(child-type=data-source)");
                 for (String d : dps)
                 {
                     res += " { \"{#DSHOST}\":\"" + s + "\", \"{#DSAS}\":\"" + a + "\", \"{#DSNAME}\":\"" + d + "\"},";
                 }
-                
+
             }
         }
 
         res = res.substring(0, res.length() - 1) + "]}";
+
         return res;
     }
 }

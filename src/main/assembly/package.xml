@@ -10,7 +10,7 @@
 	<fileSets>
 		<fileSet>
 			<directory>${project.basedir}/src/main/resources</directory>
-			<outputDirectory>/conf</outputDirectory>
+			<outputDirectory>./conf</outputDirectory>
 			<includes>
 				<include>*.properties</include>
 				<include>*.xml</include>
@@ -21,7 +21,7 @@
 
 		<fileSet>
 			<directory>${project.basedir}/src/main/scripts</directory>
-			<outputDirectory>/bin</outputDirectory>
+			<outputDirectory>./bin</outputDirectory>
 			<includes>
 				<include>*.sh</include>
 				<include>*.ps1</include>
@@ -31,7 +31,7 @@
 
 		<fileSet>
 			<directory>${project.basedir}/src/main/scripts</directory>
-			<outputDirectory>/conf</outputDirectory>
+			<outputDirectory>./conf</outputDirectory>
 			<includes>
 				<include>*.properties</include>
 			</includes>
@@ -40,7 +40,7 @@
         
         <fileSet>
 			<directory>${project.basedir}/src/main/scripts</directory>
-			<outputDirectory>/template</outputDirectory>
+			<outputDirectory>./template</outputDirectory>
 			<includes>
 				<include>*.xml</include>
 			</includes>
@@ -49,7 +49,7 @@
 
 		<fileSet>
 			<directory>${project.basedir}/src/test/resources</directory>
-			<outputDirectory>/conf</outputDirectory>
+			<outputDirectory>./conf</outputDirectory>
 			<includes>
 				<include>*.properties</include>
 				<include>*.xml</include>
@@ -60,7 +60,7 @@
 
 		<fileSet>
 			<directory>${project.basedir}/src/main/scripts</directory>
-			<outputDirectory>/logs</outputDirectory>
+			<outputDirectory>./logs</outputDirectory>
 			<excludes>
 				<exclude>*</exclude>
 			</excludes>
@@ -71,14 +71,14 @@
 	<files>
 		<file>
 			<source>${project.build.directory}/${project.artifactId}-${project.version}.jar</source>
-			<outputDirectory>/lib</outputDirectory>
+			<outputDirectory>./lib</outputDirectory>
 			<destName>connector.jar</destName>
 		</file>
 	</files>
 
 	<dependencySets>
 		<dependencySet>
-			<outputDirectory>/lib</outputDirectory>
+			<outputDirectory>./lib</outputDirectory>
 			<useProjectArtifact>false</useProjectArtifact>
 			<unpack>false</unpack>
 			<scope>runtime</scope>
