@@ -12,12 +12,24 @@ It does not have to be on the same server as JBoss.
 * Select the account that should run the agent. Default is zabbix. 
 * Using that account, unzip the file onto your system (Windows or Linux). 
 * Modify conf/conf.properties: you must specify the remote (or local) JBoss server or domain controller with a valid JBoss account
-* Run bin/connector.sh start
+* Run bin/connector.sh start (it will create a daemon)
+
+Starting multiple agents
+****************************
+
+By default, connector.sh will use the configuration file conf/conf.properties to identify the JBoss server to connect to.
+You can also specify environment variable CONFFILE before running connector.sh to specify a different configuration file:
+
+    export CONFFILE="/path/to/conf.properties"
+    ./bin/connector.sh start
+
+This allows to run multiple agents monitoring each a different Jboss cluster with a single install.
+Please note that all agents will share the same query definition file (items.txt).
 
 Template import
 ******************
 
-Inside the zip, there is a teplate/zabbix_template.xml file. Just import it inside Zabbix 2.0+ and associate it with a host.
+Inside the zip, there is a template/zabbix_template.xml file. Just import it inside Zabbix 2.0+ and associate it with a host.
 
 The host must have an agent interface corresponding to the agent installed in the previous section.
 
